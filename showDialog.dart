@@ -123,8 +123,6 @@ class _showDialogMineState extends State<showDialogMine> {
                   color: Colors.black,
                 ),
                 onPressed: () {
-                  // print(
-                  //     'The value is ${tooltipValues[_value.round()]} and the text is ${textEditingController.text}');
                   Navigator.pop(context, {
                     "sliderValue": tooltipValues[_value.round()],
                     "textFieldValue": textEditingController.text,

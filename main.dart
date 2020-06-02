@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'showDialog.dart';
 import 'factorList.dart';
+import 'itemList.dart';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 
 void main() => runApp(new MyApp());
 
@@ -20,6 +22,7 @@ class ListDisplay extends StatefulWidget {
 
 class DyanmicList extends State<ListDisplay> {
   List<Map> litems = [];
+  bool _isVisible = false;
   final TextEditingController eCtrl = new TextEditingController();
 
   @override
@@ -42,11 +45,6 @@ class DyanmicList extends State<ListDisplay> {
       home: SafeArea(
         minimum: const EdgeInsets.all(10.0),
         child: new Scaffold(
-            appBar: AppBar(
-              title: Text('Decision Matrix'),
-              backgroundColor: Colors.red[500],
-              toolbarOpacity: 0.75,
-            ),
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.grey[900],
             body: new Column(
@@ -76,29 +74,55 @@ class DyanmicList extends State<ListDisplay> {
                                 },
                                 delete: () {
                                   setState(() {
-                                    print('index is, $index');
                                     litems.removeAt(index);
-                                    print('after delete, $litems\n');
                                   });
                                 },
                               ));
                         })),
               ],
             ),
-            floatingActionButton: FloatingActionButton(
-                backgroundColor: Colors.red[500],
-                child: Icon(Icons.add),
-                onPressed: () async {
-                  final Map dialogData = await showDialog<Map>(
-                    context: context,
-                    builder: (context) => showDialogMine(),
-                  );
-                  setState(() {
-                    litems.add(dialogData);
-
-                    print('data JSON is, $litems');
-                  });
-                })),
+            floatingActionButton: FabCircularMenu(
+                fabColor: Colors.red[500],
+                ringDiameter: MediaQuery.of(context).size.width * 0.8,
+                ringWidth: MediaQuery.of(context).size.width * 0.6 * 0.3,
+                fabSize: 60.0,
+                fabOpenIcon: Icon(Icons.add),
+                fabCloseColor: Colors.green,
+                fabElevation: 15.0,
+                fabMargin: EdgeInsets.all(15.0),
+                ringColor: Colors.red[500],
+                children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        final Map dialogData = await showDialog<Map>(
+                          context: context,
+                          builder: (context) => showDialogMine(),
+                        );
+                        setState(() {
+                          litems.add(dialogData);
+                        });
+                      }),
+                  IconButton(
+                      icon: Icon(Icons.done),
+                      onPressed: () {
+                        setState(() {
+                          _isVisible = true;
+                        });
+                      }),
+                  Visibility(
+                    visible: _isVisible,
+                    child: IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ItemList(factors: litems)));
+                        }),
+                  )
+                ])),
       ),
     );
   }

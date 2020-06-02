@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class FactorList extends StatelessWidget {
+class ItemListElement extends StatelessWidget {
   final Map listObject;
   final int index;
   final Function edit;
