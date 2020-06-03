@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:hello/itemList.dart';
 
 class ItemListElement extends StatelessWidget {
   final Map listObject;
@@ -7,7 +8,7 @@ class ItemListElement extends StatelessWidget {
   final Function edit;
   final Function delete;
 
-  FactorList({this.listObject, this.index, this.edit, this.delete});
+  ItemListElement({this.listObject, this.index, this.edit, this.delete});
   @override
   Widget build(BuildContext context) {
     return Slidable(
@@ -26,7 +27,7 @@ class ItemListElement extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    this.listObject['textFieldValue'],
+                    this.listObject['itemTextFieldValue'],
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),

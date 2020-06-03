@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:hello/showItemDialog.dart';
+import 'itemListElement.dart';
+import 'backend_result.dart';
 
 class ItemList extends StatefulWidget {
   final List<Map> factors;
@@ -23,7 +25,6 @@ class _ItemListState extends State<ItemList> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.factors.length);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme:
@@ -42,8 +43,31 @@ class _ItemListState extends State<ItemList> {
                           itemCount: items.length,
                           itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
-                              padding: EdgeInsets.all(3.0),
-                              child: Text('hello'),
+                              padding: const EdgeInsets.all(3.0),
+                              child: ItemListElement(
+                                  listObject: items[index],
+                                  index: index,
+                                  edit: () async {
+                                    Map editedData = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ShowItemDialog(
+                                                  data: items[index],
+                                                  factorsData: widget.factors,
+                                                  factorsLength:
+                                                      widget.factors.length,
+                                                ),
+                                            fullscreenDialog: true));
+                                    setState(() {
+                                      items[index] = editedData;
+                                    });
+                                  },
+                                  delete: () {
+                                    setState(() {
+                                      items.removeAt(index);
+                                    });
+                                  }),
                             );
                           }),
                     )
@@ -63,14 +87,20 @@ class _ItemListState extends State<ItemList> {
                       IconButton(
                           icon: Icon(Icons.add),
                           onPressed: () async {
-                            await Navigator.push(
+                            Map dialogData = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ShowItemDialog(
-                                        factorLength: widget.factors.length),
+                                          factorsLength: widget.factors.length,
+                                          factorsData: widget.factors,
+                                          sliderValues: List<double>.filled(
+                                              widget.factors.length, 0),
+                                        ),
                                     fullscreenDialog: true));
 
-                            setState(() {});
+                            setState(() {
+                              items.add(dialogData);
+                            });
                           }),
                       IconButton(
                           icon: Icon(Icons.done),
@@ -82,7 +112,15 @@ class _ItemListState extends State<ItemList> {
                       Visibility(
                         visible: _isVisible,
                         child: IconButton(
-                            icon: Icon(Icons.send), onPressed: () {}),
+                            icon: Icon(Icons.send),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Result(
+                                          factors: widget.factors,
+                                          items: items)));
+                            }),
                       )
                     ]))));
   }
