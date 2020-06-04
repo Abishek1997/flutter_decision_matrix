@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hello/drawerContent.dart';
 import 'showDialog.dart';
 import 'factorList.dart';
 import 'itemList.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
+import 'package:getflutter/getflutter.dart';
+import 'searchFunction.dart';
+import 'introCarousel.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(new IntroScreen());
 
 class MyApp extends StatelessWidget {
   @override
@@ -22,13 +26,20 @@ class ListDisplay extends StatefulWidget {
 
 class DyanmicList extends State<ListDisplay> {
   List<Map> litems = [];
+  List<Map> litemsDuplicate = [];
+
   bool _isVisible = false;
   final TextEditingController eCtrl = new TextEditingController();
+  final TextEditingController searchTextController =
+      new TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     // TODO: implement initState
     litems = [];
+    litemsDuplicate = [];
+
     super.initState();
   }
 
@@ -43,54 +54,107 @@ class DyanmicList extends State<ListDisplay> {
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData(brightness: Brightness.dark),
       home: SafeArea(
-        minimum: const EdgeInsets.all(10.0),
+        minimum: const EdgeInsets.only(top: 20.0),
         child: new Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.grey[900],
-            body: new Column(
-              children: <Widget>[
-                new Expanded(
-                    child: new ListView.builder(
-                        itemCount: litems.length,
-                        itemBuilder: (BuildContext ctxt, int index) {
-                          return Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: FactorList(
-                                listObject: litems[index],
-                                index: index,
-                                edit: () async {
-                                  final Map editedData = await showDialog<Map>(
-                                    context: context,
-                                    builder: (context) => showDialogMine(
-                                        textFieldValue: litems[index]
-                                            ['textFieldValue'],
-                                        sliderValue: litems[index]
-                                            ['sliderNumValue'],
-                                        index: index),
-                                  );
-                                  setState(() {
-                                    litems[index] = editedData;
-                                  });
-                                },
-                                delete: () {
-                                  setState(() {
-                                    litems.removeAt(index);
-                                  });
-                                },
-                              ));
-                        })),
+            key: _scaffoldKey,
+            appBar: GFAppBar(
+              elevation: 3.0,
+              searchBarColorTheme: Color(0xff985EFF),
+              leading: GFIconButton(
+                icon: IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {},
+                  color: Color(0xff985EFF),
+                ),
+                onPressed: () {},
+                type: GFButtonType.transparent,
+              ),
+              backgroundColor: Colors.grey[900],
+              searchBar: true,
+              searchHintText: 'Search factors..',
+              searchController: searchTextController,
+              onChanged: (text) {
+                List<Map> returnData = SearchFunction()
+                    .filterSearchResults(text, litems, litemsDuplicate);
+                setState(() {
+                  litems = returnData;
+                });
+              },
+              searchHintStyle: TextStyle(color: Colors.white),
+              title: Text(
+                "Factors",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                    color: Color(0xff985EFF),
+                    letterSpacing: 1.0),
+              ),
+              actions: <Widget>[
+                GFIconButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Color(0xff985EFF),
+                  ),
+                  iconSize: 25.0,
+                  onPressed: () {},
+                  type: GFButtonType.transparent,
+                ),
               ],
             ),
+            resizeToAvoidBottomInset: false,
+            body: Builder(
+              builder: (context) => Container(
+                color: Colors.grey[900],
+                child: new Column(
+                  children: <Widget>[
+                    new Expanded(
+                        child: new ListView.builder(
+                            itemCount: litems.length,
+                            itemBuilder: (BuildContext ctxt, int index) {
+                              return Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      1.0, 2.0, 1.0, 0.0),
+                                  child: FactorList(
+                                    listObject: litems[index],
+                                    index: index,
+                                    edit: () async {
+                                      final Map editedData =
+                                          await showDialog<Map>(
+                                        context: context,
+                                        builder: (context) => showDialogMine(
+                                            textFieldValue: litems[index]
+                                                ['textFieldValue'],
+                                            sliderValue: litems[index]
+                                                ['sliderNumValue'],
+                                            index: index),
+                                      );
+                                      setState(() {
+                                        litems[index] = editedData;
+                                        litemsDuplicate[index] = editedData;
+                                      });
+                                    },
+                                    delete: () {
+                                      setState(() {
+                                        litems.removeAt(index);
+                                        litemsDuplicate.removeAt(index);
+                                      });
+                                    },
+                                  ));
+                            })),
+                  ],
+                ),
+              ),
+            ),
             floatingActionButton: FabCircularMenu(
-                fabColor: Colors.red[500],
-                ringDiameter: MediaQuery.of(context).size.width * 0.8,
-                ringWidth: MediaQuery.of(context).size.width * 0.6 * 0.3,
+                fabColor: Colors.red[800],
+                ringDiameter: MediaQuery.of(context).size.width * 0.5,
+                ringWidth: MediaQuery.of(context).size.width * 0.35 * 0.3,
                 fabSize: 60.0,
                 fabOpenIcon: Icon(Icons.add),
-                fabCloseColor: Colors.green,
-                fabElevation: 15.0,
-                fabMargin: EdgeInsets.all(15.0),
-                ringColor: Colors.red[500],
+                fabCloseColor: Color(0xffa239a0),
+                fabElevation: 5.0,
+                fabMargin: EdgeInsets.all(12.0),
+                ringColor: Colors.red[800],
                 children: <Widget>[
                   IconButton(
                       icon: Icon(Icons.add),
@@ -101,13 +165,31 @@ class DyanmicList extends State<ListDisplay> {
                         );
                         setState(() {
                           litems.add(dialogData);
+                          litemsDuplicate.add(dialogData);
                         });
                       }),
                   IconButton(
                       icon: Icon(Icons.done),
                       onPressed: () {
                         setState(() {
-                          _isVisible = true;
+                          if (litems.length > 0)
+                            _isVisible = true;
+                          else {
+                            _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                content: Row(children: <Widget>[
+                                  Icon(
+                                    Icons.warning,
+                                    color: Colors.red[800],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    child:
+                                        Text('Please enter atleast one factor'),
+                                  ),
+                                ]),
+                                elevation: 100.0,
+                                duration: Duration(seconds: 2)));
+                          }
                         });
                       }),
                   Visibility(

@@ -24,7 +24,7 @@ class _ShowItemDialogState extends State<ShowItemDialog> {
     // TODO: implement initState
 
     if (widget.data != null) {
-      textEditingController.text = widget.data['itemTextFieldValue'];
+      textEditingController.text = widget.data['textFieldValue'];
       sliderValuesToSet = widget.data['sliderValuesArray'];
     } else {
       sliderValuesToSet = List<double>.filled(widget.factorsLength, 0);
@@ -200,8 +200,7 @@ class _ShowItemDialogState extends State<ShowItemDialog> {
                                 });
 
                                 Navigator.pop(context, {
-                                  "itemTextFieldValue":
-                                      textEditingController.text,
+                                  "textFieldValue": textEditingController.text,
                                   "sliderValuesArray": sliderValuesToSet,
                                   "sliderStringArray": sliderStringArray
                                 });

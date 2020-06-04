@@ -14,7 +14,8 @@ class FactorList extends StatelessWidget {
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
       child: Card(
-        color: Colors.grey[800],
+        elevation: 4.0,
+        color: Color(0xff24292e),
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         child: Column(
@@ -26,15 +27,23 @@ class FactorList extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    this.listObject['textFieldValue'],
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    this.listObject['textFieldValue'].toString().replaceFirst(
+                        this.listObject['textFieldValue'][0],
+                        this
+                            .listObject['textFieldValue'][0]
+                            .toString()
+                            .toUpperCase()),
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.normal,
+                        color: Color(0xffe5e7ea)),
                   ),
                   Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
                           iconSize: 18.0,
-                          icon: Icon(Icons.edit),
+                          icon: Icon(Icons.edit, color: Color(0xffe5e7ea)),
                           onPressed: edit))
                 ],
               ),
@@ -48,7 +57,7 @@ class FactorList extends StatelessWidget {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
           child: IconSlideAction(
             caption: 'Delete',
-            color: Colors.red,
+            color: Colors.red[800],
             icon: Icons.delete,
             onTap: delete,
           ),

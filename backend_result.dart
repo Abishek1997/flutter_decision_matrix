@@ -45,7 +45,7 @@ class _ResultState extends State<Result> {
             itemMapping[widget.items[item]['sliderStringArray'][factor]] *
                 factorMapping[widget.factors[factor]['sliderValue']];
       }
-      resultScore[widget.items[item]['itemTextFieldValue']] = tempResult;
+      resultScore[widget.items[item]['textFieldValue']] = tempResult;
     }
 
     var sortedKeys = resultScore.keys.toList(growable: false)
