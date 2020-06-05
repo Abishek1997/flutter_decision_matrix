@@ -19,7 +19,7 @@ class _IntroScreenState extends State<IntroScreen> {
 
     slides.add(
       new Slide(
-        title: "ERASER",
+        title: "Factors",
         description:
             "Allow miles wound place the leave had. To sitting subject no improve studied limited",
         pathImage: "images/holo.png",
@@ -28,7 +28,7 @@ class _IntroScreenState extends State<IntroScreen> {
     );
     slides.add(
       new Slide(
-        title: "PENCIL",
+        title: "Decision Items",
         description:
             "Ye indulgence unreserved connection alteration appearance",
         pathImage: "images/unity.png",
@@ -37,7 +37,7 @@ class _IntroScreenState extends State<IntroScreen> {
     );
     slides.add(
       new Slide(
-        title: "RULER",
+        title: "Results",
         description:
             "Much evil soon high in hope do view. Out may few northward believing attempted. Yet timed being songs marry one defer men our. Although finished blessing do of",
         pathImage: "images/vr_icon.png",

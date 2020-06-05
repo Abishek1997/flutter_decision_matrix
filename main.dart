@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hello/drawerContent.dart';
 import 'showDialog.dart';
 import 'factorList.dart';
 import 'itemList.dart';
@@ -7,6 +6,7 @@ import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:getflutter/getflutter.dart';
 import 'searchFunction.dart';
 import 'introCarousel.dart';
+import 'drawerUI.dart';
 
 void main() => runApp(new IntroScreen());
 
@@ -57,18 +57,11 @@ class DyanmicList extends State<ListDisplay> {
         minimum: const EdgeInsets.only(top: 20.0),
         child: new Scaffold(
             key: _scaffoldKey,
+            drawer: DrawerUI(),
             appBar: GFAppBar(
+              iconTheme: new IconThemeData(color: Color(0xff985EFF)),
               elevation: 3.0,
               searchBarColorTheme: Color(0xff985EFF),
-              leading: GFIconButton(
-                icon: IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: () {},
-                  color: Color(0xff985EFF),
-                ),
-                onPressed: () {},
-                type: GFButtonType.transparent,
-              ),
               backgroundColor: Colors.grey[900],
               searchBar: true,
               searchHintText: 'Search factors..',
