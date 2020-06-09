@@ -58,12 +58,12 @@ class _IntroScreenState extends State<IntroScreen> {
         builder: (context) => IntroSlider(
             slides: this.slides,
             onDonePress: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyApp()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ListDisplay()));
             },
             onSkipPress: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyApp()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ListDisplay()));
             }),
       ),
     );

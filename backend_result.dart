@@ -1,7 +1,10 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:nice_button/nice_button.dart';
+import 'drawerUI.dart';
+import 'package:getflutter/getflutter.dart';
+import 'resultsBreakdown.dart';
 
 class Result extends StatefulWidget {
   final List<Map> factors;
@@ -17,8 +20,11 @@ class _ResultState extends State<Result> {
   Map<String, int> itemMapping;
   int numFactors;
   int numItems;
+  TextEditingController searchTextController = new TextEditingController();
   Map<String, int> resultScore;
   List<String> finalWinners;
+  List<double> finalWinnersScoreNormalized;
+  int cutoff;
 
   @override
   void initState() {
@@ -29,15 +35,14 @@ class _ResultState extends State<Result> {
     numItems = widget.items.length;
     resultScore = {};
     finalWinners = [];
-
+    cutoff = 0;
+    finalWinnersScoreNormalized = [];
     super.initState();
   }
 
   void resultCalculation() {
     int tempResult;
 
-    print(
-        'the factors are ${widget.factors} and the items are ${widget.items}');
     for (int item = 0; item < numItems; item++) {
       tempResult = 0;
       for (int factor = 0; factor < numFactors; factor++) {
@@ -53,71 +58,159 @@ class _ResultState extends State<Result> {
     LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
         key: (k) => k, value: (k) => resultScore[k]);
 
-    int cutoff = 0;
-
-    for (final iterator in sortedMap.keys) {
-      if (cutoff > 2) {
-        break;
+    if (sortedMap.length < 3) {
+      sortedMap.keys.forEach((element) {
+        finalWinners.add(element);
+        finalWinnersScoreNormalized.add(sortedMap[element] * 1.0);
+      });
+    } else {
+      for (final iterator in sortedMap.keys) {
+        if (cutoff > 2) {
+          break;
+        }
+        finalWinners.add(iterator);
+        finalWinnersScoreNormalized.add(sortedMap[iterator] * 1.0);
+        cutoff += 1;
       }
-      finalWinners.add(iterator);
-      cutoff += 1;
     }
-    ;
+
+    double tempVal = finalWinnersScoreNormalized[0];
+
+    for (int iter = 0; iter < finalWinnersScoreNormalized.length; iter++) {
+      finalWinnersScoreNormalized[iter] =
+          (finalWinnersScoreNormalized[iter] / tempVal) * 100;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     resultCalculation();
-    return SafeArea(
-      child: Column(
-        children: <Widget>[
-          Card(
-            color: Colors.black,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 0.0),
-              child: Text(
-                ' Based on the inputted factors\' priorities and the performance of each decision item on each factor, the following are the top 3 decision choices to make',
-                style: TextStyle(
-                    fontSize: 22.0,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey[100]),
-              ),
+    return Material(
+      color: Colors.grey[900],
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.grey[900],
+          appBar: GFAppBar(
+            iconTheme: new IconThemeData(color: Color(0xff985EFF)),
+            elevation: 3.0,
+            searchBarColorTheme: Color(0xff985EFF),
+            backgroundColor: Colors.grey[900],
+            searchBar: false,
+            searchHintStyle: TextStyle(color: Colors.white),
+            title: Text(
+              "Results",
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18.0,
+                  color: Color(0xff985EFF),
+                  letterSpacing: 1.0),
             ),
+            actions: <Widget>[
+              GFIconButton(
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Color(0xff985EFF),
+                ),
+                iconSize: 25.0,
+                onPressed: () {},
+                type: GFButtonType.transparent,
+              ),
+            ],
           ),
-          Expanded(
-            child: Container(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  height: 200,
+          drawer: DrawerUI(),
+          body: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.grey[800], Colors.grey[900]],
+                    tileMode: TileMode.mirror)),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 20.0),
                   child: Card(
-                    color: Colors.grey[800],
-                    child: ListView.separated(
-                        separatorBuilder: (context, index) => Divider(
-                              color: Colors.white,
-                            ),
-                        itemCount: 3,
-                        itemBuilder: (BuildContext ctxt, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                finalWinners[index],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20.0,
-                                    color: Colors.grey[300]),
-                              ),
-                            ),
-                          );
-                        }),
+                    color: Colors.black,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 5.0),
+                      child: Text(
+                        ' The top 3 decision choices to choose based on your input are:',
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.grey[300]),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Expanded(
+                  child: Container(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ListView.builder(
+                          itemCount: finalWinners.length,
+                          itemBuilder: (BuildContext ctxt, int index) {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 3),
+                                  child: Text(
+                                    '${finalWinners[index].toString().toUpperCase()}',
+                                    style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: Color(0xff985EFF),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(15.0),
+                                  child: new LinearPercentIndicator(
+                                    width:
+                                        MediaQuery.of(context).size.width - 50,
+                                    animation: true,
+                                    lineHeight: 25.0,
+                                    animationDuration: 2000,
+                                    percent:
+                                        finalWinnersScoreNormalized[index] /
+                                            100,
+                                    center: Text(
+                                      '${finalWinnersScoreNormalized[index]}%',
+                                      style: TextStyle(
+                                          color: Color(0xff7700e6),
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    linearStrokeCap: LinearStrokeCap.roundAll,
+                                    progressColor: Color(0xff02bfa3),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 20, 0, 20),
+                  child: NiceButton(
+                    elevation: 5,
+                    background: null,
+                    radius: 20,
+                    fontSize: 25,
+                    gradientColors: [Color(0xffc180ff), Color(0xff420080)],
+                    padding: EdgeInsets.all(5.0),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ResultBreakdown()));
+                    },
+                    text: 'Results breakdown',
+                  ),
+                )
+              ],
             ),
-          )
-        ],
+          ),
+        ),
       ),
     );
   }

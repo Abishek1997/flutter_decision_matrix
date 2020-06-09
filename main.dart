@@ -8,7 +8,7 @@ import 'searchFunction.dart';
 import 'introCarousel.dart';
 import 'drawerUI.dart';
 
-void main() => runApp(new IntroScreen());
+void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   @override
@@ -113,6 +113,7 @@ class DyanmicList extends State<ListDisplay> {
                                     edit: () async {
                                       final Map editedData =
                                           await showDialog<Map>(
+                                        barrierDismissible: false,
                                         context: context,
                                         builder: (context) => showDialogMine(
                                             textFieldValue: litems[index]

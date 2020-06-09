@@ -5,6 +5,7 @@ import 'itemListElement.dart';
 import 'backend_result.dart';
 import 'package:getflutter/getflutter.dart';
 import 'searchFunction.dart';
+import 'drawerUI.dart';
 
 class ItemList extends StatefulWidget {
   final List<Map> factors;
@@ -43,6 +44,7 @@ class _ItemListState extends State<ItemList> {
             minimum: const EdgeInsets.only(top: 20.0),
             child: new Scaffold(
                 key: _scaffoldKey,
+                drawer: DrawerUI(),
                 appBar: GFAppBar(
                   elevation: 3.0,
                   leading: GFIconButton(
@@ -174,7 +176,7 @@ class _ItemListState extends State<ItemList> {
                                         padding:
                                             const EdgeInsets.only(left: 10.0),
                                         child: Text(
-                                            'Please enter atleast one factor'),
+                                            'Please enter atleast one decision choice'),
                                       ),
                                     ]),
                                     elevation: 100.0,
