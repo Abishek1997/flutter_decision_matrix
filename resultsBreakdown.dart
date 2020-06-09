@@ -11,6 +11,7 @@ class ResultBreakdown extends StatefulWidget {
 }
 
 class _ResultBreakdownState extends State<ResultBreakdown> {
+  String imageHolder;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -70,15 +71,27 @@ class _ResultBreakdownState extends State<ResultBreakdown> {
                       }
                     },
                     child: Card(
-                      color: Colors.grey[700],
-                      child: Center(
-                          child: Text(
-                        'Results Breakdown: ${itemIndex + 1}',
-                        style: TextStyle(
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      )),
+                      color: Colors.grey[800],
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 60.0),
+                            child: new Image.asset(itemIndex == 0
+                                ? 'images/bar.png'
+                                : 'images/pie.png'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 25.0),
+                            child: Text(
+                              'Results Breakdown: ${itemIndex + 1}',
+                              style: TextStyle(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       elevation: 10.0,
                     ),
                   ),

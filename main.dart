@@ -112,16 +112,20 @@ class DyanmicList extends State<ListDisplay> {
                                     index: index,
                                     edit: () async {
                                       final Map editedData =
-                                          await showDialog<Map>(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) => showDialogMine(
-                                            textFieldValue: litems[index]
-                                                ['textFieldValue'],
-                                            sliderValue: litems[index]
-                                                ['sliderNumValue'],
-                                            index: index),
-                                      );
+                                          await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      showDialogMine(
+                                                          textFieldValue: litems[
+                                                                  index]
+                                                              [
+                                                              'textFieldValue'],
+                                                          sliderValue: litems[
+                                                                  index][
+                                                              'sliderNumValue'],
+                                                          index: index)));
+
                                       setState(() {
                                         litems[index] = editedData;
                                         litemsDuplicate[index] = editedData;
@@ -153,10 +157,10 @@ class DyanmicList extends State<ListDisplay> {
                   IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () async {
-                        final Map dialogData = await showDialog<Map>(
-                          context: context,
-                          builder: (context) => showDialogMine(),
-                        );
+                        final Map dialogData = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => showDialogMine()));
                         setState(() {
                           litems.add(dialogData);
                           litemsDuplicate.add(dialogData);

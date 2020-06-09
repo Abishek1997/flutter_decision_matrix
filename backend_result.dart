@@ -127,16 +127,27 @@ class _ResultState extends State<Result> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 20.0),
-                  child: Card(
-                    color: Colors.black,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 5.0),
-                      child: Text(
-                        ' The top 3 decision choices to choose based on your input are:',
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.grey[300]),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border(
+                            bottom: BorderSide(color: Colors.grey[800]),
+                            top: BorderSide(color: Colors.grey[800]),
+                            left: BorderSide(color: Colors.grey[800]),
+                            right: BorderSide(color: Colors.grey[800])),
+                        gradient: LinearGradient(
+                            colors: [Color(0xff22BFFF), Color(0xff0068FF)])),
+                    child: Card(
+                      color: Colors.transparent,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 5.0),
+                        child: Text(
+                          ' The top 3 decision choices to choose based on your input are:',
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.grey[300]),
+                        ),
                       ),
                     ),
                   ),
