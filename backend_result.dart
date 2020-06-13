@@ -25,6 +25,7 @@ class _ResultState extends State<Result> {
   List<String> finalWinners;
   List<double> finalWinnersScoreNormalized;
   int cutoff;
+  List<Map> resultBreakDown;
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _ResultState extends State<Result> {
     finalWinners = [];
     cutoff = 0;
     finalWinnersScoreNormalized = [];
+    resultBreakDown = [];
     super.initState();
   }
 
@@ -45,18 +47,57 @@ class _ResultState extends State<Result> {
 
     for (int item = 0; item < numItems; item++) {
       tempResult = 0;
+      Map<String, Map> tempObj = {};
+      tempObj[widget.items[item]['textFieldValue']] = Map<String, int>();
       for (int factor = 0; factor < numFactors; factor++) {
         tempResult +=
             itemMapping[widget.items[item]['sliderStringArray'][factor]] *
                 factorMapping[widget.factors[factor]['sliderValue']];
+
+        tempObj[widget.items[item]['textFieldValue']]
+                [widget.factors[factor]['textFieldValue']] =
+            itemMapping[widget.items[item]['sliderStringArray'][factor]] *
+                factorMapping[widget.factors[factor]['sliderValue']];
       }
+
       resultScore[widget.items[item]['textFieldValue']] = tempResult;
+
+      var sortedFactors = tempObj[widget.items[item]['textFieldValue']]
+          .keys
+          .toList(growable: false)
+            ..sort((key1, key2) =>
+                tempObj[widget.items[item]['textFieldValue']][key2].compareTo(
+                    tempObj[widget.items[item]['textFieldValue']][key1]));
+      LinkedHashMap sortedFactorsMap = new LinkedHashMap.fromIterable(
+          sortedFactors,
+          key: (k) => k,
+          value: (k) => tempObj[widget.items[item]['textFieldValue']][k]);
+      tempObj[widget.items[item]['textFieldValue']] = sortedFactorsMap;
+      resultBreakDown.add(tempObj);
     }
+
+    print('result breakdown is, $resultBreakDown');
 
     var sortedKeys = resultScore.keys.toList(growable: false)
       ..sort((key1, key2) => resultScore[key2].compareTo(resultScore[key1]));
     LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
         key: (k) => k, value: (k) => resultScore[k]);
+
+    int factorCutoff = 0;
+
+    for (int i = 0; i < resultBreakDown.length; i++) {
+      for (final key in resultBreakDown[i].keys) {
+        var tempObj = {};
+        for (final factor in resultBreakDown[i][key].keys) {
+          if (factorCutoff > 2) break;
+          tempObj[factor] = resultBreakDown[i][key][factor];
+          factorCutoff += 1;
+        }
+        resultBreakDown[i][key] = tempObj;
+      }
+    }
+
+    print('result breakdown is, $resultBreakDown');
 
     if (sortedMap.length < 3) {
       sortedMap.keys.forEach((element) {
@@ -142,7 +183,7 @@ class _ResultState extends State<Result> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 5.0),
                         child: Text(
-                          ' The top 3 decision choices to choose based on your input are:',
+                          ' The top ${finalWinners.length > 3 ? 3 : finalWinners.length} decision choices to choose based on your input are:',
                           style: TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.w700,

@@ -73,7 +73,7 @@ class _showDialogMineState extends State<showDialogMine> {
                                         bottom: 11,
                                         top: 11,
                                         right: 15),
-                                    hintText: "Enter your item here.."),
+                                    hintText: "Enter your factor here.."),
                               ),
                             ),
                           ),
