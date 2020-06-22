@@ -6,6 +6,18 @@ import 'firstChart.dart';
 import 'secondChart.dart';
 
 class ResultBreakdown extends StatefulWidget {
+  final List<Map> result;
+  final List finalWinners;
+  final List factors;
+  final List finalWinnersAll;
+  final List finalWinnersScoreNormalized;
+
+  ResultBreakdown(
+      {this.result,
+      this.finalWinners,
+      this.factors,
+      this.finalWinnersAll,
+      this.finalWinnersScoreNormalized}) {}
   @override
   _ResultBreakdownState createState() => _ResultBreakdownState();
 }
@@ -63,11 +75,21 @@ class _ResultBreakdownState extends State<ResultBreakdown> {
                   child: GestureDetector(
                     onTap: () {
                       if (itemIndex == 0) {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Chart1()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Chart1(
+                                    result: widget.result,
+                                    finalWinners: widget.finalWinners,
+                                    factors: widget.factors)));
                       } else if (itemIndex == 1) {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Chart2()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Chart2(
+                                    winners: widget.finalWinnersAll,
+                                    winnersScore:
+                                        widget.finalWinnersScoreNormalized)));
                       }
                     },
                     child: Card(
@@ -80,16 +102,34 @@ class _ResultBreakdownState extends State<ResultBreakdown> {
                                 ? 'images/bar.png'
                                 : 'images/pie.png'),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 25.0),
-                            child: Text(
-                              'Results Breakdown: ${itemIndex + 1}',
-                              style: TextStyle(
-                                fontSize: 25.0,
-                                fontWeight: FontWeight.w700,
+                          if (itemIndex == 0)
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.width * 0.15,
+                                  20.0,
+                                  25.0,
+                                  15.0),
+                              child: Text(
+                                'Item-wise factor contribution split-up',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
+                            )
+                          else
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  MediaQuery.of(context).size.width * 0.1,
+                                  20.0,
+                                  25.0,
+                                  15.0),
+                              child: Text(
+                                  'Item contribution to overall decision',
+                                  style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w700)),
                             ),
-                          ),
                         ],
                       ),
                       elevation: 10.0,

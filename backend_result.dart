@@ -26,7 +26,9 @@ class _ResultState extends State<Result> {
   List<double> finalWinnersScoreNormalized;
   int cutoff;
   List<Map> resultBreakDown;
-
+  List<String> finalWinnersAll;
+  List<double> finalWinnersScoreNormalizedAll;
+  var sortedFactors;
   @override
   void initState() {
     // TODO: implement initState
@@ -39,35 +41,51 @@ class _ResultState extends State<Result> {
     cutoff = 0;
     finalWinnersScoreNormalized = [];
     resultBreakDown = [];
+    sortedFactors = [];
+    finalWinnersAll = [];
+    finalWinnersScoreNormalizedAll = [];
     super.initState();
   }
 
   void resultCalculation() {
     int tempResult;
+    int tempObjResult;
+    int tempCount;
 
     for (int item = 0; item < numItems; item++) {
       tempResult = 0;
+      tempCount = 1;
       Map<String, Map> tempObj = {};
       tempObj[widget.items[item]['textFieldValue']] = Map<String, int>();
+      tempObjResult = 0;
       for (int factor = 0; factor < numFactors; factor++) {
         tempResult +=
             itemMapping[widget.items[item]['sliderStringArray'][factor]] *
                 factorMapping[widget.factors[factor]['sliderValue']];
 
-        tempObj[widget.items[item]['textFieldValue']]
-                [widget.factors[factor]['textFieldValue']] =
+        tempObjResult =
             itemMapping[widget.items[item]['sliderStringArray'][factor]] *
                 factorMapping[widget.factors[factor]['sliderValue']];
+
+        tempObj[widget.items[item]['textFieldValue']].keys.forEach((element) {
+          if (tempObj[widget.items[item]['textFieldValue']][element] ==
+              tempObjResult) {
+            tempObj[widget.items[item]['textFieldValue']][element] += tempCount;
+            tempCount += 1;
+          }
+        });
+
+        tempObj[widget.items[item]['textFieldValue']]
+            [widget.factors[factor]['textFieldValue']] = tempObjResult;
       }
 
       resultScore[widget.items[item]['textFieldValue']] = tempResult;
 
-      var sortedFactors = tempObj[widget.items[item]['textFieldValue']]
-          .keys
-          .toList(growable: false)
-            ..sort((key1, key2) =>
-                tempObj[widget.items[item]['textFieldValue']][key2].compareTo(
-                    tempObj[widget.items[item]['textFieldValue']][key1]));
+      sortedFactors = tempObj[widget.items[item]['textFieldValue']].keys.toList(
+          growable: false)
+        ..sort((key1, key2) => tempObj[widget.items[item]['textFieldValue']]
+                [key2]
+            .compareTo(tempObj[widget.items[item]['textFieldValue']][key1]));
       LinkedHashMap sortedFactorsMap = new LinkedHashMap.fromIterable(
           sortedFactors,
           key: (k) => k,
@@ -75,8 +93,6 @@ class _ResultState extends State<Result> {
       tempObj[widget.items[item]['textFieldValue']] = sortedFactorsMap;
       resultBreakDown.add(tempObj);
     }
-
-    print('result breakdown is, $resultBreakDown');
 
     var sortedKeys = resultScore.keys.toList(growable: false)
       ..sort((key1, key2) => resultScore[key2].compareTo(resultScore[key1]));
@@ -86,6 +102,8 @@ class _ResultState extends State<Result> {
     int factorCutoff = 0;
 
     for (int i = 0; i < resultBreakDown.length; i++) {
+      factorCutoff = 0;
+
       for (final key in resultBreakDown[i].keys) {
         var tempObj = {};
         for (final factor in resultBreakDown[i][key].keys) {
@@ -96,8 +114,6 @@ class _ResultState extends State<Result> {
         resultBreakDown[i][key] = tempObj;
       }
     }
-
-    print('result breakdown is, $resultBreakDown');
 
     if (sortedMap.length < 3) {
       sortedMap.keys.forEach((element) {
@@ -115,11 +131,24 @@ class _ResultState extends State<Result> {
       }
     }
 
+    for (final iterator in sortedMap.keys) {
+      finalWinnersAll.add(iterator);
+      finalWinnersScoreNormalizedAll.add(sortedMap[iterator] * 1.0);
+      cutoff += 1;
+    }
+
     double tempVal = finalWinnersScoreNormalized[0];
 
     for (int iter = 0; iter < finalWinnersScoreNormalized.length; iter++) {
       finalWinnersScoreNormalized[iter] =
           (finalWinnersScoreNormalized[iter] / tempVal) * 100;
+    }
+
+    double tempValAll = finalWinnersScoreNormalizedAll.reduce((a, b) => a + b);
+    for (int iter = 0; iter < finalWinnersScoreNormalizedAll.length; iter++) {
+      finalWinnersScoreNormalizedAll[iter] = double.parse(
+          ((finalWinnersScoreNormalizedAll[iter] / tempValAll) * 100)
+              .toStringAsFixed(2));
     }
   }
 
@@ -224,7 +253,7 @@ class _ResultState extends State<Result> {
                                         finalWinnersScoreNormalized[index] /
                                             100,
                                     center: Text(
-                                      '${finalWinnersScoreNormalized[index]}%',
+                                      '${finalWinnersScoreNormalized[index].toStringAsFixed(0)}%',
                                       style: TextStyle(
                                           color: Color(0xff7700e6),
                                           fontStyle: FontStyle.italic,
@@ -254,7 +283,13 @@ class _ResultState extends State<Result> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ResultBreakdown()));
+                              builder: (context) => ResultBreakdown(
+                                  result: resultBreakDown,
+                                  finalWinners: finalWinners,
+                                  factors: sortedFactors,
+                                  finalWinnersAll: finalWinnersAll,
+                                  finalWinnersScoreNormalized:
+                                      finalWinnersScoreNormalizedAll)));
                     },
                     text: 'Results breakdown',
                   ),
