@@ -1,3 +1,4 @@
+import 'package:hello/routingConstants.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/slide_object.dart';
@@ -47,25 +48,19 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   void onDonePress() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+    Navigator.popAndPushNamed(context, HomeViewRoute);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      key: _materialAppKey,
-      home: Builder(
-        builder: (context) => IntroSlider(
+        key: _materialAppKey,
+        home: Builder(
+          builder: (context) => IntroSlider(
             slides: this.slides,
-            onDonePress: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ListDisplay()));
-            },
-            onSkipPress: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ListDisplay()));
-            }),
-      ),
-    );
+            onDonePress: onDonePress,
+            onSkipPress: onDonePress,
+          ),
+        ));
   }
 }

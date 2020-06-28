@@ -18,6 +18,7 @@ class _showDialogMineState extends State<showDialogMine> {
   int index = -1;
 
   final TextEditingController textEditingController = TextEditingController();
+  bool _visibile;
 
   @override
   void initState() {
@@ -32,6 +33,7 @@ class _showDialogMineState extends State<showDialogMine> {
       _value = widget.sliderValue;
     }
 
+    _visibile = false;
     super.initState();
   }
 
@@ -58,13 +60,28 @@ class _showDialogMineState extends State<showDialogMine> {
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.80,
                               child: TextField(
+                                onChanged: (val) {
+                                  if (val == '') {
+                                    setState(() {
+                                      _visibile = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _visibile = false;
+                                    });
+                                  }
+                                },
                                 controller: textEditingController,
                                 enableInteractiveSelection: true,
                                 maxLength: 25,
                                 autofocus: false,
                                 decoration: new InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[800])),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xff985EFF))),
                                     enabledBorder: InputBorder.none,
                                     errorBorder: InputBorder.none,
                                     disabledBorder: InputBorder.none,
@@ -77,9 +94,22 @@ class _showDialogMineState extends State<showDialogMine> {
                               ),
                             ),
                           ),
+                          Visibility(
+                            visible: _visibile,
+                            child: Text(
+                              'Please enter text to continue..',
+                              style: TextStyle(
+                                  color: Colors.red[800],
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10.0,
+                          ),
                           Padding(
                             padding:
-                                const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 5.0),
+                                const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 5.0),
                             child: Text(
                               'Enter the priority for your factor',
                               style: TextStyle(
@@ -140,22 +170,28 @@ class _showDialogMineState extends State<showDialogMine> {
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: IconButton(
-                                        icon: Icon(Icons.send),
-                                        onPressed: () {
-                                          Navigator.pop(context, {
-                                            "sliderValue":
-                                                tooltipValues[_value.round()],
-                                            "textFieldValue":
-                                                textEditingController.text,
-                                            "sliderNumValue": _value,
-                                          });
-                                        }),
-                                  )
                                 ],
                               )),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: RaisedButton(
+                                disabledColor: Colors.grey[800],
+                                color: Color(0xff985EFF),
+                                onPressed: (textEditingController.text == '')
+                                    ? null
+                                    : () {
+                                        print(
+                                            'text, ${textEditingController.text}');
+                                        Navigator.pop(context, {
+                                          "sliderValue":
+                                              tooltipValues[_value.round()],
+                                          "textFieldValue":
+                                              textEditingController.text,
+                                          "sliderNumValue": _value,
+                                        });
+                                      },
+                                child: Text('Send'),
+                              ))
                         ]))))));
   }
 }

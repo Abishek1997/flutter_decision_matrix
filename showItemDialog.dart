@@ -61,8 +61,12 @@ class _ShowItemDialogState extends State<ShowItemDialog> {
                                 maxLength: 25,
                                 autofocus: false,
                                 decoration: new InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey[800])),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xff985EFF))),
                                     enabledBorder: InputBorder.none,
                                     errorBorder: InputBorder.none,
                                     disabledBorder: InputBorder.none,
@@ -189,22 +193,30 @@ class _ShowItemDialogState extends State<ShowItemDialog> {
                               ),
                             ),
                           ),
-                          IconButton(
-                              icon: Icon(Icons.send),
-                              onPressed: () {
-                                List<String> sliderStringArray = [];
+                          Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: RaisedButton(
+                                disabledColor: Colors.grey[800],
+                                color: Color(0xff985EFF),
+                                onPressed: (textEditingController.text == '')
+                                    ? null
+                                    : () {
+                                        List<String> sliderStringArray = [];
 
-                                sliderValuesToSet.forEach((element) {
-                                  sliderStringArray
-                                      .add(tooltipValues[element.round()]);
-                                });
-
-                                Navigator.pop(context, {
-                                  "textFieldValue": textEditingController.text,
-                                  "sliderValuesArray": sliderValuesToSet,
-                                  "sliderStringArray": sliderStringArray
-                                });
-                              })
+                                        sliderValuesToSet.forEach((element) {
+                                          sliderStringArray.add(
+                                              tooltipValues[element.round()]);
+                                        });
+                                        Navigator.pop(context, {
+                                          "textFieldValue":
+                                              textEditingController.text,
+                                          "sliderValuesArray":
+                                              sliderValuesToSet,
+                                          "sliderStringArray": sliderStringArray
+                                        });
+                                      },
+                                child: Text('Send'),
+                              )),
                         ]))))));
   }
 }

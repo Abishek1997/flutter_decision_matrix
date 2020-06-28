@@ -107,11 +107,17 @@ class _ItemListState extends State<ItemList> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ShowItemDialog(
-                                                    data: items[index],
-                                                    factorsData: widget.factors,
-                                                    factorsLength:
-                                                        widget.factors.length,
+                                                  WillPopScope(
+                                                    onWillPop: () async {
+                                                      return false;
+                                                    },
+                                                    child: ShowItemDialog(
+                                                      data: items[index],
+                                                      factorsData:
+                                                          widget.factors,
+                                                      factorsLength:
+                                                          widget.factors.length,
+                                                    ),
                                                   ),
                                               fullscreenDialog: true));
                                       setState(() {
@@ -146,11 +152,17 @@ class _ItemListState extends State<ItemList> {
                             Map dialogData = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ShowItemDialog(
-                                          factorsLength: widget.factors.length,
-                                          factorsData: widget.factors,
-                                          sliderValues: List<double>.filled(
-                                              widget.factors.length, 0),
+                                    builder: (context) => WillPopScope(
+                                          onWillPop: () async {
+                                            return false;
+                                          },
+                                          child: ShowItemDialog(
+                                            factorsLength:
+                                                widget.factors.length,
+                                            factorsData: widget.factors,
+                                            sliderValues: List<double>.filled(
+                                                widget.factors.length, 0),
+                                          ),
                                         ),
                                     fullscreenDialog: true));
 

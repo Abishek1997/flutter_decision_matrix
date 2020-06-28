@@ -5,16 +5,30 @@ import 'itemList.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:getflutter/getflutter.dart';
 import 'searchFunction.dart';
-import 'introCarousel.dart';
 import 'drawerUI.dart';
+import 'router.dart' as router;
+import 'routingConstants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(new MyApp());
+bool seen;
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.getBool('seenIntro') != null) {
+    seen = prefs.getBool('seenIntro');
+  } else {
+    prefs.setBool('seenIntro', true);
+  }
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext ctxt) {
     return new MaterialApp(
-      home: new ListDisplay(),
+      initialRoute:
+          seen == false || seen == null ? IntroScreenViewRoute : HomeViewRoute,
+      onGenerateRoute: router.generateRoute,
     );
   }
 }
@@ -36,7 +50,6 @@ class DyanmicList extends State<ListDisplay> {
 
   @override
   void initState() {
-    // TODO: implement initState
     litems = [];
     litemsDuplicate = [];
 
@@ -115,16 +128,22 @@ class DyanmicList extends State<ListDisplay> {
                                           await Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      showDialogMine(
-                                                          textFieldValue: litems[
-                                                                  index]
-                                                              [
-                                                              'textFieldValue'],
-                                                          sliderValue: litems[
-                                                                  index][
-                                                              'sliderNumValue'],
-                                                          index: index)));
+                                                  builder:
+                                                      (context) => WillPopScope(
+                                                            onWillPop:
+                                                                () async {
+                                                              return false;
+                                                            },
+                                                            child: showDialogMine(
+                                                                textFieldValue:
+                                                                    litems[index]
+                                                                        [
+                                                                        'textFieldValue'],
+                                                                sliderValue: litems[
+                                                                        index][
+                                                                    'sliderNumValue'],
+                                                                index: index),
+                                                          )));
 
                                       setState(() {
                                         litems[index] = editedData;
@@ -160,7 +179,11 @@ class DyanmicList extends State<ListDisplay> {
                         final Map dialogData = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => showDialogMine()));
+                                builder: (context) => WillPopScope(
+                                    onWillPop: () async {
+                                      return false;
+                                    },
+                                    child: showDialogMine())));
                         setState(() {
                           litems.add(dialogData);
                           litemsDuplicate.add(dialogData);

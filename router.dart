@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hello/introCarousel.dart';
 import 'package:hello/main.dart';
-import 'package:intro_slider/intro_slider.dart';
+import 'routingConstants.dart';
 
-class RouteGenerator {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments;
+Route<dynamic> generateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case HomeViewRoute:
+      return MaterialPageRoute(builder: (context) => ListDisplay());
 
-    switch (settings.name) {
-      case '/':
-        return MaterialPageRoute(builder: (_) => IntroScreen());
-      case '/second':
-        if (args is String) {
-          return MaterialPageRoute(
-            builder: (_) => MyApp(),
-          );
-        }
-    }
+    case IntroScreenViewRoute:
+      return MaterialPageRoute(builder: (context) => IntroScreen());
+
+    default:
+      return MaterialPageRoute(builder: (context) => ListDisplay());
   }
 }
